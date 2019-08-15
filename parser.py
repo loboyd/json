@@ -6,6 +6,9 @@ def read_from(x):
     file.close()
     return contents
 
+def is_string(x):
+    return len(x) > 1 and x[0] == '\"' and x[-1] == '\"'
+
 def tokenize(x):
     """takes a JSON-ecoded string and returns a list of tokens"""
     
@@ -93,17 +96,9 @@ def parse(x):
 
     i = 0
     while True:
-        # get key's first quote
-        while x[i] != '\"':
-            i += 1
-        i += 1
-
-        # buffer everything up to key's second quote
-        key_buf = ''
-        while x[i] != '\"':
-            key_buf += x[i]
-            i += 1
-        i += 1
+        # get key
+        if not is_string(x[i]):
+            key = x[i]
 
         # get colon
         if x[i] != ':':
