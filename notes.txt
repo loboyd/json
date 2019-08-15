@@ -1,0 +1,10 @@
+example.txt is taken from Wikipedia.org
+number_example.txt is example.txt with a few extra number test cases
+simple_example.txt is an example of a simple subset of JSON
+
+"Simple" JSON object:
+- entire object is enclosed by a set of curly braces
+- within this object, there is a series of comma-separated key/value pairs
+- each key is a quote-enclosed string
+- each value is either another string or a reurrsively defined
+  JSON object
