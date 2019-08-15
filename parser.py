@@ -80,10 +80,7 @@ def tokenize(x):
     return tokens
 
 def parse(x):
-    """parses a JSON-encoded string into a dictionary of dictionaries"""
-    x = x.strip()
-    if x == '{}':
-        return ''
+    """parses a list of JSON tokens into a dictionary of dictionaries"""
     if x[0] != '{':
         print('no opening brace; returning None...')
         return None
@@ -137,6 +134,10 @@ def parse(x):
             break
 
     return obj
+
+def decode(x):
+    """Decodes a JSON-encoded string into a dictionary of dictionaries"""
+    return parse(tokenize(x))
 
 def parse_simple(x):
     """parses a JSON-encoded string into a dictionary of dictionaries"""
@@ -204,9 +205,9 @@ if __name__ == '__main__':
     print('JSON example:')
     print(contents, '\n\n')
     print('tokenized:')
-    #print(tokenize(contents))
-    for token in tokenize(contents):
-        print(token)
+    print(tokenize(contents))
+    #for token in tokenize(contents):
+        #print(token)
 
 
 

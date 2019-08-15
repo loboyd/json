@@ -1,6 +1,6 @@
-example.txt is taken from Wikipedia.org
-number_example.txt is example.txt with a few extra number test cases
-simple_example.txt is an example of a simple subset of JSON
+example.json is taken from Wikipedia.org
+number_example.json is example.json with a few extra number test cases
+simple_example.json is an example of a simple subset of JSON
 
 "Simple" JSON object:
 - entire object is enclosed by a set of curly braces
