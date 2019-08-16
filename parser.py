@@ -210,65 +210,6 @@ def encode(x):
 
     return json
 
-def parse_simple(x):
-    """parses a JSON-encoded string into a dictionary of dictionaries"""
-    x = x.strip()
-    if x == '{}':
-        return ''
-    if x[0] != '{':
-        print('no opening brace; returning None...')
-        return None
-    if x[-1] != '}':
-        print('no closing brace; returning None...')
-        return None
-
-    # initialize object
-    obj = {}
-
-    i = 0
-    while True:
-        # get key's first quote
-        while x[i] != '\"':
-            i += 1
-        i += 1
-
-        # buffer everything up to key's second quote
-        key_buf = ''
-        while x[i] != '\"':
-            key_buf += x[i]
-            i += 1
-        i += 1
-
-        # get colon
-        if x[i] != ':':
-            print('no colon; returning None...')
-            return None
-
-        # get opening brace
-        while x[i] != '{':
-            i += 1
-        brace_ct = 1
-
-        # buffer everything up to appropriate closing brace
-        value_buf = '{'
-        while brace_ct > 0:
-            i += 1
-            if x[i] == '}':
-                brace_ct -= 1
-            elif x[i] == '{':
-                brace_ct += 1
-            # buffer after advance so we get the closing brace
-            value_buf += x[i]
-
-        # add to object
-        obj[key_buf] = parse_simple(value_buf)
-
-        i += 1
-        if x[i] != ',':
-            break
-
-    return obj
-
 """ scratch-work
 {
     "key1": <value1>,
