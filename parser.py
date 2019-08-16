@@ -92,8 +92,6 @@ def tokenize(x):
 def parse(x):
     """parses a list of JSON tokens into a dictionary of dictionaries"""
 
-    print('input:', ''.join(x))
-
     # check for opening curly brace
     if x[0] != '{':
         print('no opening brace; returning None...')
@@ -101,8 +99,6 @@ def parse(x):
 
     # check for closing curly brace
     if x[-1] != '}':
-        #print('input:')
-        #print(x)
         print('no closing curly brace; returning None...')
         return None
 
@@ -115,8 +111,7 @@ def parse(x):
         if not is_string(x[i]):
             #print('key was not string; returning None...')
             return None
-        key = x[i]
-        #print('found key:', x[i])
+        key = x[i][1:-1]  # slicing removes outer quotes
         i += 1
 
         # get colon
@@ -124,33 +119,27 @@ def parse(x):
             print('no colon; returning None...')
             return None
         i += 1
-        #print(x[i])
 
         # get (non-key) string
         if is_string(x[i]):
-            obj[key] = x[i]
-            #print(x[i])
+            obj[key] = x[i][1:-1]  # slicing removes quotes
             i += 1
 
         # get numerical
         if is_number(x[i]):
-            obj[key] = x[i]
-            #print(x[i])
+            obj[key] = x[i][1:-1]  # slicing removes quotes
             i += 1
 
         # get keywords
         elif x[i] == 'null':
-            #print('adding null...')
             obj[key] = None
             i += 1
 
         elif x[i] == 'true':
-            #print('adding true...')
             obj[key] = True
             i += 1
 
         elif x[i] == 'false':
-            #print('adding false...')
             obj[key] = False
             i += 1
 
@@ -163,22 +152,63 @@ def parse(x):
                 brace_ct += 1 if x[j] == '{' else 0
                 brace_ct -= 1 if x[j] == '}' else 0
 
-            #print('adding an object...')
             obj[key] = parse(x[i:j+1])
             i = j + 1
 
         if x[i] != ',':
-            print('could not find comma; breaking...')
             break
 
-        #print('i:', i)
         i += 1
 
     return obj
 
 def decode(x):
-    """Decodes a JSON-encoded string into a dictionary of dictionaries"""
+    """Decode a JSON-encoded string into a dictionary of dictionaries"""
     return parse(tokenize(x))
+
+def encode(x):
+    """Encode a dictionary of dictionaries into a string with JSON"""
+    json = '{'
+    first = True
+    for key in x:
+        # check all keys are of type string
+        if type(key) != str:
+            return None
+
+        # add a comma before every key-value pair except the first
+        if not first:
+            json += ', '
+        first = False
+
+        # grab value
+        val = x[key]
+
+        # handle values with type string
+        if type(val) == str:
+            json += key + ': "' + val + '"'
+
+        # handle values with type number
+        elif type(val) == int or type(val) == float:
+            json += key + ': ' + val
+
+        # handle keyword values
+        elif val == True:
+            json += key + ': true'
+
+        elif val == False:
+            json += key + ': false'
+
+        elif val == None:
+            json += key + ': null'
+
+        # handle recursive object case
+        elif type(val) == dict:
+            json += key + ': ' + encode(val)
+            #json += '{}'
+
+    json += '}'
+
+    return json
 
 def parse_simple(x):
     """parses a JSON-encoded string into a dictionary of dictionaries"""

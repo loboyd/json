@@ -10,3 +10,6 @@ print(contents)
 print('\n\ndecoded:')
 print(decode(contents))
 
+print('\n\nre-encoded:')
+print(encode(decode(contents)))
+
