@@ -9,6 +9,13 @@ def read_from(x):
 def is_string(x):
     return len(x) > 1 and x[0] == '\"' and x[-1] == '\"'
 
+def is_number(x):
+    try:
+        _ = float(x)
+    except:
+        return False
+    return True
+
 def tokenize(x):
     """takes a JSON-ecoded string and returns a list of tokens"""
     
@@ -84,49 +91,88 @@ def tokenize(x):
 
 def parse(x):
     """parses a list of JSON tokens into a dictionary of dictionaries"""
+
+    print('input:', ''.join(x))
+
+    # check for opening curly brace
     if x[0] != '{':
         print('no opening brace; returning None...')
         return None
+
+    # check for closing curly brace
     if x[-1] != '}':
-        print('no closing brace; returning None...')
+        #print('input:')
+        #print(x)
+        print('no closing curly brace; returning None...')
         return None
 
     # initialize object
     obj = {}
 
-    i = 0
+    i = 1  # already checked opening curly brace
     while True:
         # get key
         if not is_string(x[i]):
-            key = x[i]
+            #print('key was not string; returning None...')
+            return None
+        key = x[i]
+        #print('found key:', x[i])
+        i += 1
 
         # get colon
         if x[i] != ':':
             print('no colon; returning None...')
             return None
-
-        # get opening brace
-        while x[i] != '{':
-            i += 1
-        brace_ct = 1
-
-        # buffer everything up to appropriate closing brace
-        value_buf = '{'
-        while brace_ct > 0:
-            i += 1
-            if x[i] == '}':
-                brace_ct -= 1
-            elif x[i] == '{':
-                brace_ct += 1
-            # buffer after advance so we get the closing brace
-            value_buf += x[i]
-
-        # add to object
-        obj[key_buf] = parse(value_buf)
-
         i += 1
+        #print(x[i])
+
+        # get (non-key) string
+        if is_string(x[i]):
+            obj[key] = x[i]
+            #print(x[i])
+            i += 1
+
+        # get numerical
+        if is_number(x[i]):
+            obj[key] = x[i]
+            #print(x[i])
+            i += 1
+
+        # get keywords
+        elif x[i] == 'null':
+            #print('adding null...')
+            obj[key] = None
+            i += 1
+
+        elif x[i] == 'true':
+            #print('adding true...')
+            obj[key] = True
+            i += 1
+
+        elif x[i] == 'false':
+            #print('adding false...')
+            obj[key] = False
+            i += 1
+
+        # parse objects recursively
+        elif x[i] == '{':
+            brace_ct = 1
+            j = i
+            while brace_ct > 0:
+                j += 1
+                brace_ct += 1 if x[j] == '{' else 0
+                brace_ct -= 1 if x[j] == '}' else 0
+
+            #print('adding an object...')
+            obj[key] = parse(x[i:j+1])
+            i = j + 1
+
         if x[i] != ',':
+            print('could not find comma; breaking...')
             break
+
+        #print('i:', i)
+        i += 1
 
     return obj
 
@@ -185,28 +231,13 @@ def parse_simple(x):
             value_buf += x[i]
 
         # add to object
-        obj[key_buf] = parse(value_buf)
+        obj[key_buf] = parse_simple(value_buf)
 
         i += 1
         if x[i] != ',':
             break
 
     return obj
-
-
-if __name__ == '__main__':
-    #contents = read_from('simple_example.txt')
-    contents = read_from('number_example.txt')
-    print('JSON example:')
-    print(contents, '\n\n')
-    print('tokenized:')
-    print(tokenize(contents))
-    #for token in tokenize(contents):
-        #print(token)
-
-
-
-
 
 """ scratch-work
 {

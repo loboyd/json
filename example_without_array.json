@@ -1,0 +1,22 @@
+{
+  "firstName": "John",
+  "lastName": "Smith",
+  "isAlive": true,
+  "age": 27,
+  "age": 0.27,
+  "age": 27.,
+  "age": 27.3,
+  "age": .2,
+  "age": -27,
+  "age": -0.27,
+  "age": -27.,
+  "age": -27.3,
+  "age": -.2,
+  "address": {
+    "streetAddress": "21 2nd Street",
+    "city": "New York",
+    "state": "NY",
+    "postalCode": "10021-3100"
+  },
+  "spouse": null
+}
