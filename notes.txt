@@ -8,3 +8,30 @@ simple_example.json is an example of a simple subset of JSON
 - each key is a quote-enclosed string
 - each value is either another string or a reurrsively defined
   JSON object
+
+object structure:
+BEGIN
+{
+    <key1>: <value1>,
+    <key2>: <value2>,
+    <key3>: <value3>
+}
+END
+
+Keys can only be strings, but values can be strings, numbers, true, false,
+null, arrays or objects. Arrays are comma-separated value lists enclosed by
+square braces.
+
+tokens:
+  - strings
+  - numbers
+  - `true`
+   -`false`
+  - `null`
+  - `:`
+  - `,`
+  - `{`
+  - `}`
+  - `[`
+  - `]`
+

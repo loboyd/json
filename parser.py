@@ -210,25 +210,3 @@ def encode(x):
 
     return json
 
-""" scratch-work
-{
-    "key1": <value1>,
-    "key2": <value2>,
-    "key3": <value3>
-}
-
-tokens:
-  - strings
-  - numbers
-  - `true`
-   -`false`
-  - `null`
-  - `:`
-  - `,`
-  - `{`
-  - `}`
-  - `[`
-  - `]`
-
-"""
-
