@@ -64,7 +64,7 @@ def tokenize(x):
                 i += 1
             if buf == '.' or buf == '-.' or buf == '-':
                 # invalid number
-                return None
+                raise ValueError('shitty JSON: specific definition of number is evidently unclear')
             else:
                 tokens.append(buf)
 
@@ -85,39 +85,39 @@ def tokenize(x):
 
         # invalid
         else:
-            return None
+            raise ValueError('shitty JSON: found unexpected token: {}'.format(x[i]))
 
     return tokens
 
-def parse(x):
-    """parses a list of JSON tokens into a dictionary of dictionaries"""
+def parse(x, ind=0):
+    """ Parse a list of JSON tokens into a dictionary of dictionaries
+
+    The `i` parameter is for calling the function recursively with a different
+    starting index (the starting index of the nested JSON object).
+    """
 
     # check for opening curly brace
     if x[0] != '{':
-        print('no opening brace; returning None...')
-        return None
+        raise ValueError('shitty JSON: expected opening curly brace')
 
     # check for closing curly brace
     if x[-1] != '}':
-        print('no closing curly brace; returning None...')
-        return None
+        raise ValueError('shitty JSON: expected closing curly brace')
 
     # initialize object
     obj = {}
 
-    i = 1  # already checked opening curly brace
-    while True:
+    i = ind + 1  # already checked opening brace
+    while x[i] != '}':
         # get key
         if not is_string(x[i]):
-            #print('key was not string; returning None...')
-            return None
+            raise ValueError('shitty JSON: non-string key found')
         key = x[i][1:-1]  # slicing removes outer quotes
         i += 1
 
         # get colon
         if x[i] != ':':
-            print('no colon; returning None...')
-            return None
+            raise ValueError('shittyJSON: expected a colon')
         i += 1
 
         # get (non-key) string
@@ -143,23 +143,17 @@ def parse(x):
             obj[key] = False
             i += 1
 
-        # parse objects recursively
+        # parse objects recursively; update index (this is linear time)
         elif x[i] == '{':
-            brace_ct = 1
-            j = i
-            while brace_ct > 0:
-                j += 1
-                brace_ct += 1 if x[j] == '{' else 0
-                brace_ct -= 1 if x[j] == '}' else 0
-
-            obj[key] = parse(x[i:j+1])
-            i = j + 1
+            obj[key], i = parse(x, i)
 
         if x[i] != ',':
             break
 
         i += 1
 
+    if ind:
+        return obj, i+1
     return obj
 
 def decode(x):
@@ -173,7 +167,7 @@ def encode(x):
     for key in x:
         # check all keys are of type string
         if type(key) != str:
-            return None
+            raise ValueError('all keys must be of type `str`')
 
         # add a comma before every key-value pair except the first
         if not first:
