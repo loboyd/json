@@ -127,7 +127,7 @@ def parse(x, ind=0):
 
         # get numerical
         if is_number(x[i]):
-            obj[key] = x[i][1:-1]  # slicing removes quotes
+            obj[key] = x[i]
             i += 1
 
         # get keywords
